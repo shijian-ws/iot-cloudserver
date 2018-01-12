@@ -1,0 +1,11 @@
+# mysql数据测试
+
+spring:
+    # 数据库连接池配置
+    datasource:
+        driverClassName: com.mysql.jdbc.Driver
+        url: jdbc:mysql://127.0.0.1:3306/test_oauth2?useUnicode=true&characterEncoding=UTF-8
+        username: root
+        password: 123456
+        schema: classpath:sql/schema-mysql.sql
+        #data: classpath:sql/mysql-data.sql

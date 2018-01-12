@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.sj.iot.dao.IUserDAO">
+    <resultMap id="userResultMap" type="org.sj.iot.model.User">
+        <id property="id" column="ID" javaType="string"/>
+        <result column="MOBILE" property="mobile" javaType="string"/>
+        <result column="EMAIL" property="email" javaType="string"/>
+        <result column="USERNAME" property="username" javaType="string"/>
+        <result column="PASSWORD" property="password" javaType="string"/>
+        <result column="STATUS" property="status" javaType="integer"/>
+        <result column="NICKNAME" property="nickname" javaType="string"/>
+        <result column="HEAD_IMG_URL" property="headImgUrl" javaType="string"/>
+        <result column="SEX" property="sex" javaType="integer"/>
+        <result column="COUNTRY" property="country" javaType="string"/>
+        <result column="PROVINCE" property="province" javaType="string"/>
+        <result column="CITY" property="city" javaType="string"/>
+        <result column="CREATION_TIME" property="creationTime" javaType="long"/>
+    </resultMap>
+
+    <sql id="userField">
+        ${alias}ID, ${alias}MOBILE, ${alias}EMAIL, ${alias}USERNAME, ${alias}PASSWORD, ${alias}STATUS, ${alias}NICKNAME, ${alias}HEAD_IMG_URL, ${alias}SEX, ${alias}COUNTRY, ${alias}PROVINCE, ${alias}CITY, ${alias}CREATION_TIME
+    </sql>
+
+    <select id="getUserByMobile" parameterType="string" resultMap="userResultMap">
+        SELECT <include refid="userField"><property name="alias" value=""/></include> FROM T_OAUTH2_USER WHERE MOBILE=#{mobile}
+    </select>
+
+    <select id="getUserByEmailAndPassword" resultMap="userResultMap">
+        SELECT <include refid="userField"><property name="alias" value=""/></include> FROM T_OAUTH2_USER WHERE PASSWORD=#{password} AND EMAIL=#{email}
+    </select>
+
+    <select id="getUserByEmail" parameterType="string" resultMap="userResultMap">
+        SELECT <include refid="userField"><property name="alias" value=""/></include> FROM T_OAUTH2_USER WHERE EMAIL=#{email}
+    </select>
+
+    <select id="getUserByUsernameAndPassword" resultMap="userResultMap">
+        SELECT <include refid="userField"><property name="alias" value=""/></include> FROM T_OAUTH2_USER WHERE PASSWORD=#{password} AND USERNAME=#{username}
+    </select>
+
+    <select id="getUserByUsername" parameterType="string" resultMap="userResultMap">
+        SELECT <include refid="userField"><property name="alias" value=""/></include> FROM T_OAUTH2_USER WHERE USERNAME=#{username}
+    </select>
+
+    <select id="checkUsername" parameterType="string" resultType="_boolean">
+        SELECT COUNT(1) FROM T_OAUTH2_USER WHERE USERNAME=#{username}
+    </select>
+
+    <insert id="saveUser">
+        INSERT INTO T_OAUTH2_USER(<include refid="userField"><property name="alias" value=""/></include>) VALUES(#{id}, #{mobile}, #{email}, #{username}, #{password}, #{status}, #{nickname}, #{headImgUrl}, #{sex}, #{country}, #{province}, #{city}, #{creationTime})
+    </insert>
+
+    <update id="updateUser">
+        UPDATE T_OAUTH2_USER
+        <trim prefix="SET" suffixOverrides="," suffix="WHERE ID=#{id}">
+            <if test="mobile!=null">
+                MOBILE=#{mobile},
+            </if>
+            <if test="email!=null">
+                EMAIL=#{email},
+            </if>
+            <if test="username!=null">
+                USERNAME=#{username},
+            </if>
+            <if test="password!=null">
+                <choose>
+                    <when test="password=='null'">
+                        PASSWORD=NULL,
+                    </when>
+                    <otherwise>PASSWORD=#{password},</otherwise>
+                </choose>
+            </if>
+            <if test="status!=null">
+                STATUS=#{status},
+            </if>
+            <if test="nickname!=null">
+                NICKNAME=#{nickname},
+            </if>
+            <if test="headImgUrl!=null">
+                HEAD_IMG_URL=#{headImgUrl},
+            </if>
+            <if test="sex!=null">
+                SEX=#{sex},
+            </if>
+            <if test="country!=null">
+                COUNTRY=#{country},
+            </if>
+            <if test="province!=null">
+                PROVINCE=#{province},
+            </if>
+            <if test="city!=null">
+                CITY=#{city},
+            </if>
+        </trim>
+    </update>
+
+    <update id="removeMobile">
+        UPDATE T_OAUTH2_USER SET MOBILE=NULL WHERE ID=#{id}
+    </update>
+
+    <update id="removeEmail">
+        UPDATE T_OAUTH2_USER SET EMAIL=NULL WHERE ID=#{id}
+    </update>
+
+    <update id="removeUsername">
+        UPDATE T_OAUTH2_USER SET USERNAME=NULL WHERE ID=#{id}
+    </update>
+</mapper>
